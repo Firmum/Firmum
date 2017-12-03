@@ -97,7 +97,7 @@ bool Currency::generateGenesisBlock() {
 }
 
 bool Currency::getBlockReward(size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins,
-  uint64_t fee, uint64_t& reward, int64_t& emissionChange) const {
+  uint64_t fee, uint64_t& reward, int64_t& emissionChange, const AccountPublicAddress& minerAddress) const {
   assert(alreadyGeneratedCoins <= m_moneySupply);
   assert(m_emissionSpeedFactor > 0 && m_emissionSpeedFactor <= 8 * sizeof(uint64_t));
 
@@ -107,6 +107,22 @@ bool Currency::getBlockReward(size_t medianSize, size_t currentBlockSize, uint64
   if (currentBlockSize > UINT64_C(2) * medianSize) {
     logger(TRACE) << "Block cumulative size is too big: " << currentBlockSize << ", expected less than " << 2 * medianSize;
     return false;
+  }
+
+  //Checking miner history
+  std::string *luckyMiner = std::find(std::begin(genesysAccountAddressAsStringArray), std::end(genesysAccountAddressAsStringArray), accountAddressAsString(const AccountPublicAddress& minerAddress));
+
+  for (int i = MINING_DISABILITY; i > 0; --i) {
+	  genesysAccountAddressAsStringArray[i] = genesysAccountAddressAsStringArray[i - 1];
+  }
+
+  if (luckyMiner != std::end(genesysAccountAddressAsStringArray)) {
+	  logger(TRACE) << "Block generator was awarded a recent reward.";
+	  genesysAccountAddressAsStringArray[0] = "";
+	  return false;
+  }
+  else {
+	  genesysAccountAddressAsStringArray[0] = accountAddressAsString(const AccountPublicAddress& minerAddress);
   }
 
   uint64_t penalizedBaseReward = getPenalizedAmount(baseReward, medianSize, currentBlockSize);
@@ -146,8 +162,9 @@ bool Currency::constructMinerTx(uint32_t height, size_t medianSize, uint64_t alr
 
   uint64_t blockReward;
   int64_t emissionChange;
-  if (!getBlockReward(medianSize, currentBlockSize, alreadyGeneratedCoins, fee, blockReward, emissionChange)) {
-    logger(INFO) << "Block is too big";
+
+  if (!getBlockReward(medianSize, currentBlockSize, alreadyGeneratedCoins, fee, blockReward, emissionChange, minerAddress)) {		//has to pass account address
+    logger(INFO) << "Block is too big, or the miner is too lucky";
     return false;
   }
 

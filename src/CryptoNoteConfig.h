@@ -21,6 +21,9 @@ const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT            = 60 * 60 * 2;
 
 const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW             = 60;
 
+//TODO Insert the disability level of large scale mining operations
+const size_t   MINING_DISABILITY                             = 10;
+
 //TODO Specify total number of available coins
 //TODO ((uint64_t)(-1)) equals to 18446744073709551616 coins
 //TODO or you can define number explicitly UINT64_C(858986905600000000)
@@ -86,7 +89,7 @@ const size_t   COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT         =  1000;
 
 //TODO This port will be used by the daemon to establish connections with p2p network
 const int      P2P_DEFAULT_PORT                              = 8686;
-//TODO This port will be used by the daemon to interact with simlewallet
+//TODO This port will be used by the daemon to interact with simplewallet
 const int      RPC_DEFAULT_PORT                              = 6868;
 
 const size_t   P2P_LOCAL_WHITE_PEERLIST_LIMIT                =  1000;
@@ -106,9 +109,12 @@ const char     P2P_STAT_TRUSTED_PUB_KEY[]                    = "8f80f9a5a434a9f1
 
 //TODO Add here your network seed nodes
 const std::initializer_list<const char*> SEED_NODES = {
-  //"your_seed_ip1.com:8686",
+  "192.168.0.16:8686",
   //"your_seed_ip2.com:8686",
 };
+
+//Initialise the miner address array
+std::string genesysAccountAddressAsStringArray[MINING_DISABILITY];
 
 struct CheckpointData {
   uint32_t height;
