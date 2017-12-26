@@ -1,4 +1,4 @@
-# Firmum
+# Firmum 0.6
 A new concept for a digital currency.
 As cryptocurrencies evolve, new problems arrise. Some of the problems are obvious to every user (transaction fee, transaction time), other problems are obvious only to miners (hash power, electricity bills).
 A lot of people would mine a cryptocurrency, but it has become more and more difficult to mine. There are big mining farms that gather a lot of hashpower, mining pools that distribute hashpower and coins among users but keep a fee that goes up to 6-10%, countries that have free electricity for miners.
